@@ -2,20 +2,26 @@ import path ;
 
 path-constant here : . ;
 
+lib libboost_system : : <name>boost_system <search>$(boost-lib-dir) ;
+lib libboost_filesystem : : <name>boost_filesystem <search>$(boost-lib-dir) ;
+lib libboost_thread : : <name>boost_thread <search>$(boost-lib-dir) ;
+
 requirements =
 	<toolset>gcc:<cxxflags>"-std=c++11"
 	<toolset>clang:<cxxflags>"-Wall -Wno-overloaded-virtual -std=c++11"
 	<include>$(here)/include
-	<library>/boost//system
-	<library>/boost//filesystem
-	<library>/boost//thread
+        <include>$(boost-include-dir)
 	;
 
 project quince
 	: usage-requirements $(requirements)
 	;
 
+alias sources : [ path.glob-tree $(here)/src : *.cpp ] ;
+
+alias libs : libboost_system libboost_filesystem libboost_thread ;
+
 lib quince
-	: [ path.glob-tree $(here)/src : *.cpp ]
+	: sources libs
 	: $(requirements) <threading>multi <toolset>msvc:<link>static
 	;
